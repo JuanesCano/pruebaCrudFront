@@ -7,28 +7,33 @@ const initialState = {
 }
 
 export const registerUser = createAsyncThunk('userSlice/registerUser', 
-    async(arg, { rejectWithValue, dispatch}) => {
+    async (arg, { rejectWithValue, dispatch }) => {
         try {
-            dispatch(setLoading(true))
-            await axios.post("http://127.0.0.1:6000/user/register", arg);
-            dispatch(setLoading(false))
+            dispatch(setLoading(true));
+            const response = await axios.post("https://pruebacrud.onrender.com/user/register", arg);
+            dispatch(setLoading(false));
+            return response.data;
         } catch (error) {
-            return rejectWithValue(error.response.data.message)
+            dispatch(setLoading(false));
+            return rejectWithValue(error.response?.data?.message || "Error desconocido");
         }
     }
 );
 
 export const loginUser = createAsyncThunk('userSlice/loginUser', 
-    async(arg, { rejectWithValue, dispatch}) => {
+    async (arg, { rejectWithValue, dispatch }) => {
         try {
-            dispatch(setLoading(true))
-            await axios.post("http://127.0.0.1:6000/user/login", arg);
-            dispatch(setLoading(false))
+            dispatch(setLoading(true));
+            const response = await axios.post("https://pruebacrud.onrender.com/user/login", arg);
+            dispatch(setLoading(false));
+            return response.data; 
         } catch (error) {
-            return rejectWithValue(error.response.data.message)
+            dispatch(setLoading(false));
+            return rejectWithValue(error.response?.data?.message || "Error desconocido");
         }
     }
 );
+
 
 const userSlice = createSlice ({
     name: "userSlice",

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useDispatch} from "react-redux";
 import { registerUser } from "../store/users/userSlice";
+import { useNavigate } from "react-router-dom";
 
 const initialState = {
     name: "",
@@ -15,25 +16,38 @@ export const RegisterForm = () => {
     // const { users } = useSelector((state) => state.userStore);
 
     const [formulario, setFormulario] = useState(initialState);
+    const [errorMessage, setErrorMessage] = useState("")
+    const navigate = useNavigate();
 
     const handleChange = (e) => {
         setFormulario({ ...formulario, [e.target.name]: e.target.value });
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        dispatch(registerUser(formulario));
+        setErrorMessage("");
+
+        try {
+            await dispatch(registerUser(formulario)).unwrap();
+            alert("Registro exitoso");
+            navigate("/login")
+        } catch (error) {
+            setErrorMessage(error || "Hubo un problema con el registro intente de nuevo")
+        }
     }
 
     return (
         <>
             <div className="flex min-h-full flex-1 flex-col justify-center items-center px-6 py-12 lg:px-8">
-                <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm bg-white/20 rounded-lg backdrop-blur-lg pt-12 pb-16 px-7 shadow-2xl">
+                <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm bg-white/20 rounded-lg backdrop-blur-lg pt-4 pb-14 px-7 shadow-2xl">
                     <div className="sm:mx-auto sm:w-full sm:max-w-sm">
                         <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight pb-6">
                             Registro
                         </h2>
                     </div>
+                    {errorMessage && (
+                        <div className="text-red-500 text-sm text-center pb-4">{errorMessage}</div>
+                    )}
                     <form onSubmit={handleSubmit} className="space-y-6" id="1">
                         <div>
                             <input
@@ -104,6 +118,15 @@ export const RegisterForm = () => {
                             </button>
                         </div>
                     </form>
+                    <p className="mt-4 text-center text-sm text-black ">
+                        Ya tienes una cuenta?{" "}
+                        <a
+                            href="/register"
+                            className="font-semibold leading-4 text-indigo-600 hover:text-indigo-500"
+                        >
+                            Iniciar sesion
+                        </a>
+                    </p>
                 </div>
             </div>
         </>

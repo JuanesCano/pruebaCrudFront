@@ -1,22 +1,30 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { loginUser } from "../store/users/userSlice";
+import { useNavigate } from "react-router-dom";
 
 export const LoginForm = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState(""); 
     const dispatch = useDispatch();
+    const navigate = useNavigate();
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
-        dispatch(loginUser({email, password}));
+        const resultAction = await dispatch(loginUser({email, password}));
+
+        if(loginUser.fulfilled.match(resultAction)){
+            navigate("/homepage");
+        }else{
+            alert("Credenciales incorrectas o error en el servidor, intente de nuevo.")
+        } 
     };
 
     return (
         <>
             <div className="flex min-h-full flex-1 flex-col justify-center items-center px-6 py-12 lg:px-8">
-                <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm bg-white/15 rounded-lg backdrop-blur-lg pt-12 pb-16 px-7 shadow-2xl">
+                <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm bg-white/15 rounded-lg backdrop-blur-lg pt-8 pb-16 px-7 shadow-2xl">
                     <div className="sm:mx-auto sm:w-full sm:max-w-sm">
                         <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight pb-6">
                             Iniciar sesion
