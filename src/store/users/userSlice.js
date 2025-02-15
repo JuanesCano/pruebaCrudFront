@@ -52,7 +52,8 @@ const userSlice = createSlice ({
 
         builder.addCase(registerUser.rejected, (state, action) => {
             state.isLoading = false;
-            alert("error")
+            state.error = action.payload;
+            alert("error", action.payload)
         })
 
         builder.addCase(loginUser.fulfilled, (state, action) => {
@@ -62,7 +63,8 @@ const userSlice = createSlice ({
 
         builder.addCase(loginUser.rejected, (state, action) => {
             state.isLoading = false;
-            alert("error")
+            state.error = action.payload;
+            alert("error", action.payload)
         })
     }
 });

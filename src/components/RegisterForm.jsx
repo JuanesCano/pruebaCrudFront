@@ -121,7 +121,7 @@ export const RegisterForm = () => {
                     <p className="mt-4 text-center text-sm text-black ">
                         Ya tienes una cuenta?{" "}
                         <a
-                            href="/register"
+                            href="/"
                             className="font-semibold leading-4 text-indigo-600 hover:text-indigo-500"
                         >
                             Iniciar sesion
