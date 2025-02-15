@@ -22,8 +22,6 @@ export const LoginForm = () => {
             localStorage.setItem("role", role);
 
             navigate("/homepage");
-            // console.log("TOKEN", resultAction)
-            // console.log("ROLE", resultAction.payload.data.role)
         } else {
             alert("Credenciales incorrectas o error en el servidor, intente de nuevo.");
         }

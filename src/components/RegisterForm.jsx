@@ -13,7 +13,6 @@ const initialState = {
 
 export const RegisterForm = () => {
     const dispatch = useDispatch();
-    // const { users } = useSelector((state) => state.userStore);
 
     const [formulario, setFormulario] = useState(initialState);
     const [errorMessage, setErrorMessage] = useState("")

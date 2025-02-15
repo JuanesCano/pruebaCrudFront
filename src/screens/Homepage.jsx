@@ -9,8 +9,6 @@ export const Homepage = () => {
 
     useEffect(() => {
         const token = localStorage.getItem("token");
-        console.log("entre a la homepage")
-        console.log("Role desde localStorage:", role);
 
         if(!token || !role){
             navigate("/");

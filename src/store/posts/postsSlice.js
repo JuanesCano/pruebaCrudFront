@@ -23,7 +23,7 @@ export const getPosts = createAsyncThunk('postsSlice/getPosts', async (arg, { re
     }
 });
 
-export const getPostforId = createAsyncThunk('postsSlice/getPostForId', async (postId, {rejectWithValue, dispatch}) => {
+export const getPostforId = createAsyncThunk('postsSlice/getPostForId', async (postId, { rejectWithValue, dispatch }) => {
     try {
         dispatch(setLoading(true));
         const token = localStorage.getItem("token");
@@ -36,12 +36,12 @@ export const getPostforId = createAsyncThunk('postsSlice/getPostForId', async (p
         return response.data
     } catch (error) {
         dispatch(setLoading(false));
-        return rejectWithValue(error.response?.data?.message || "Error desconocido"); 
+        return rejectWithValue(error.response?.data?.message || "Error desconocido");
     }
 })
 
 export const getUserPosts = createAsyncThunk('postsSlice/getUserPosts', async (arg, { rejectWithValue, dispatch }) => {
-    try{
+    try {
         dispatch(setLoading(true));
         const token = localStorage.getItem("token");
         const response = await axios.get(`https://pruebacrud.onrender.com/post/getUserPost`, {
@@ -51,17 +51,34 @@ export const getUserPosts = createAsyncThunk('postsSlice/getUserPosts', async (a
         })
         dispatch(setLoading(false));
         return response.data
-    }catch (error) {
+    } catch (error) {
         dispatch(setLoading(false));
         return rejectWithValue(error.response?.data?.message || "Error desconocido");
     }
 });
 
-export const updatePosts = createAsyncThunk('postsSlice/updatePosts', async(postId, {rejectWithValue, dispatch}) => {
+export const addPosts = createAsyncThunk('postsSlice/addPosts', async (formData, { rejectWithValue, dispatch }) => {
     try {
         dispatch(setLoading(true));
         const token = localStorage.getItem("token");
-        const response = await axios.put(`https://pruebacrud.onrender.com/post/updatePost/${postId}`, {
+        const response = await axios.post(`https://pruebacrud.onrender.com/post/addPost`, formData, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+        dispatch(setLoading(false));
+        return response.data
+    } catch (error) {
+        dispatch(setLoading(false));
+        return rejectWithValue(error.response?.data?.message || "Error desconocido");
+    }
+})
+
+export const updatePosts = createAsyncThunk('postsSlice/updatePosts', async ({ postId, updateData }, { rejectWithValue, dispatch }) => {
+    try {
+        dispatch(setLoading(true));
+        const token = localStorage.getItem("token");
+        const response = await axios.put(`https://pruebacrud.onrender.com/post/updatePost/${postId}`, updateData, {
             headers: {
                 Authorization: `Bearer ${token}`
             }
@@ -124,6 +141,18 @@ const postSlice = createSlice({
             alert("error", action.payload)
         })
 
+        builder.addCase(addPosts.fulfilled, (state, action) => {
+            state.posts = action.payload;
+            state.error = null
+            state.isLoading = false;
+        })
+
+        builder.addCase(addPosts.rejected, (state, action) => {
+            state.isLoading = false;
+            state.error = action.payload;
+            alert("error", action.payload)
+        })
+
         builder.addCase(getPostforId.fulfilled, (state, action) => {
             state.posts = action.payload;
             state.error = null
@@ -137,13 +166,11 @@ const postSlice = createSlice({
         })
 
         builder.addCase(updatePosts.fulfilled, (state, action) => {
-            const index = state.posts.findIndex(post => post.id === action.meta.arg);
-            if (index !== -1) {
-                state.posts[index] = action.payload;
-            }
+            state.posts = action.payload;
             state.error = null
             state.isLoading = false;
         })
+
         builder.addCase(updatePosts.rejected, (state, action) => {
             state.isLoading = false;
             state.error = action.payload;
@@ -151,7 +178,7 @@ const postSlice = createSlice({
         })
 
         builder.addCase(deletePosts.fulfilled, (state, action) => {
-            state.posts = state.posts.filter(post => post.id !== action.meta.arg);
+            state.posts = action.payload;
             state.error = null
             state.isLoading = false;
         })
