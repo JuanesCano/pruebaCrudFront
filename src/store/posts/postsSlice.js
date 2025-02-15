@@ -23,6 +23,57 @@ export const getPosts = createAsyncThunk('postsSlice/getPosts', async (arg, { re
     }
 });
 
+export const getPostforId = createAsyncThunk('postsSlice/getPostForId', async (postId, {rejectWithValue, dispatch}) => {
+    try {
+        dispatch(setLoading(true));
+        const token = localStorage.getItem("token");
+        const response = await axios.get(`https://pruebacrud.onrender.com/post/${postId}`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            },
+        })
+        dispatch(setLoading(false));
+        return response.data
+    } catch (error) {
+        dispatch(setLoading(false));
+        return rejectWithValue(error.response?.data?.message || "Error desconocido"); 
+    }
+})
+
+export const getUserPosts = createAsyncThunk('postsSlice/getUserPosts', async (arg, { rejectWithValue, dispatch }) => {
+    try{
+        dispatch(setLoading(true));
+        const token = localStorage.getItem("token");
+        const response = await axios.get(`https://pruebacrud.onrender.com/post/getUserPost`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            },
+        })
+        dispatch(setLoading(false));
+        return response.data
+    }catch (error) {
+        dispatch(setLoading(false));
+        return rejectWithValue(error.response?.data?.message || "Error desconocido");
+    }
+});
+
+export const updatePosts = createAsyncThunk('postsSlice/updatePosts', async(postId, {rejectWithValue, dispatch}) => {
+    try {
+        dispatch(setLoading(true));
+        const token = localStorage.getItem("token");
+        const response = await axios.put(`https://pruebacrud.onrender.com/post/updatePost/${postId}`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+        dispatch(setLoading(false));
+        return response.data
+    } catch (error) {
+        dispatch(setLoading(false));
+        return rejectWithValue(error.response?.data?.message || "Error desconocido");
+    }
+});
+
 export const deletePosts = createAsyncThunk('postsSlice/deletePosts', async (postId, { rejectWithValue, dispatch }) => {
     try {
         dispatch(setLoading(true));
@@ -61,10 +112,46 @@ const postSlice = createSlice({
             alert("error", action.payload)
         })
 
-        builder.addCase(deletePosts.fulfilled, (state, action) => {
-            if (Array.isArray(state.posts.data)) {
-                state.posts.data = state.posts.data.filter(post => post.id !== action.meta.arg);
+        builder.addCase(getUserPosts.fulfilled, (state, action) => {
+            state.posts = action.payload;
+            state.error = null
+            state.isLoading = false;
+        })
+
+        builder.addCase(getUserPosts.rejected, (state, action) => {
+            state.isLoading = false;
+            state.error = action.payload;
+            alert("error", action.payload)
+        })
+
+        builder.addCase(getPostforId.fulfilled, (state, action) => {
+            state.posts = action.payload;
+            state.error = null
+            state.isLoading = false;
+        })
+
+        builder.addCase(getPostforId.rejected, (state, action) => {
+            state.isLoading = false;
+            state.error = action.payload;
+            alert("error", action.payload)
+        })
+
+        builder.addCase(updatePosts.fulfilled, (state, action) => {
+            const index = state.posts.findIndex(post => post.id === action.meta.arg);
+            if (index !== -1) {
+                state.posts[index] = action.payload;
             }
+            state.error = null
+            state.isLoading = false;
+        })
+        builder.addCase(updatePosts.rejected, (state, action) => {
+            state.isLoading = false;
+            state.error = action.payload;
+            alert("error", action.payload)
+        })
+
+        builder.addCase(deletePosts.fulfilled, (state, action) => {
+            state.posts = state.posts.filter(post => post.id !== action.meta.arg);
             state.error = null
             state.isLoading = false;
         })

@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { deletePosts, getPosts } from "../store/posts/postsSlice";
+import { deletePosts, getPosts, updatePosts} from "../store/posts/postsSlice";
 
 export const AdminPage = () => {
     const dispatch = useDispatch();
@@ -22,8 +22,8 @@ export const AdminPage = () => {
         }
     }, [dispatch, navigate]);
 
-    const handleEdit = (postId) => {
-        console.log(`Editar post con ID: ${postId}`);
+    const handleEdit = (postId, updatePosts) => {
+        dispatch(updatePosts({ postId, ...updatePosts }));
     };
 
     const handleDelete = (postId) => {

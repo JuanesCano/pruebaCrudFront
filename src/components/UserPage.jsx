@@ -1,11 +1,3 @@
-// export const UserPage = () => {
-
-//     return(
-//         <>
-//         </>
-//     )
-// }
-
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useSelector } from "react-redux";
