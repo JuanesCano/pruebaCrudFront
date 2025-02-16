@@ -14,7 +14,7 @@ RUN npm install
 COPY . .
 
 # Construir la aplicación para producción
-RUN npm run build
+RUN npm run build 
 
 # Etapa 2: Servidor Nginx para servir la aplicación
 FROM nginx:alpine
